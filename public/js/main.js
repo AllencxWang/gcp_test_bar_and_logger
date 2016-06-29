@@ -1,18 +1,18 @@
 (function(document, io, ko) {
 
 var vm = {},
-    socket = io.connect("http://localhost:8080");
+    socket = io.connect('http://104.199.138.139:8080');
 
-vm.caller = ko.observable("john doe");
+vm.caller = ko.observable('john doe');
 vm.rates = ko.observableArray(['Low', 'Mid', 'High']);
 vm.rate = ko.observable();
 vm.interval = ko.pureComputed(function() {
     switch(vm.rate()) {
-        case "Low":
+        case 'Low':
             return 200;
-        case "Mid":
+        case 'Mid':
             return 50;
-        case "High":
+        case 'High':
             return 20;
     }
 });
@@ -26,8 +26,7 @@ vm.canStart = ko.pureComputed(function() {
 });
 
 vm.instances = ko.observableArray([]);
-//vm.loadBalancer = "http://130.211.9.177";
-vm.loadBalancer = "http://104.199.138.139:8080";
+vm.loadBalancer = 'http://130.211.9.177';
 
 vm.start = function() {
     vm.started(true);
