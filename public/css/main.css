@@ -1,0 +1,16 @@
+body {
+    padding: 20px;
+}
+
+.space-right {
+    margin-right: 10px;
+}
+
+.badge {
+    position: relative;;
+    bottom: 15px;
+}
+
+.panel-body {
+    min-height: 150px;
+}

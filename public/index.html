@@ -1,0 +1,48 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>client bar and logging server</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="container">
+        <span>Caller</span>
+        <input class="space-right" data-bind="disable: started, textInput: caller" />
+        <span>Callee: </span>
+        <span class="space-right" data-bind="text: loadBalancer"></span>
+        <span>Rate:</span>
+        <select class="space-right" id="rates" data-bind="disable: started, options: rates, value: rate">
+        </select>
+        <span>RPS: </span>
+        <span class="space-right" data-bind="text: rps"></span>
+        <button class="btn btn-success" data-bind="enable: canStart, click: start">Start</button>
+        <button class="btn btn-danger" data-bind="enable: started, click: stop">Stop</button>
+    </div>
+    <hr />
+    <div class="row" data-bind="foreach: instances">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title" data-bind="text: name"></h3>
+                    <span class="badge pull-right" data-bind="text: count"></span>
+                </div>
+                <div class="panel-body">
+                    <div><span>caller: </span><span data-bind="text: log.caller"></span></div>
+                    <div><span>url: </span><span data-bind="text: log.url"></span></div>
+                    <div><span>body: </span><span data-bind="text: JSON.stringify(log.body)"></span></div>
+                    <div><span>query: </span><span data-bind="text: JSON.stringify(log.query)"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
