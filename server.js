@@ -5,6 +5,13 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     instances = {};
 
+
+// https://cloud.google.com/compute/docs/shutdownscript#provide_a_shutdown_script_file
+// although above link shows that there has a shutdown script which can be used as signal to clean things up
+// but I didn't find out where it is, but, based on the below link's instruction:
+// https://cloud.google.com/compute/docs/autoscaler/understanding-autoscaler-decisions
+// if an instance idled over 10 minutes, the auto scaler will shut it down
+// so we can use this property to manually remove an instance which is no longer existed
 setInterval(function() {
     Object.keys(instances).forEach(function(name) {
         if (Date.now() - instances[name].timestamp >= 11 * 60 * 1000) {
@@ -22,17 +29,19 @@ app.use(bodyParser.json());
 app.post('/instances/:name/logs', function(req, res) {
     instances[req.params.name] = {
         timestamp: Date.now(),
-        log: req.body.log, 
-        count: ( instances[req.params.name].count ? instances[req.params.name].count + 1 : 1 )
+        log: req.body,
+        count: ( name in instances ? instances[req.params.name].count + 1 : 1 )
     };
 
     io.sockets.emit('date_updated', {
         name: req.params.name,
-        log: req.body.log,
+        log: req.body,
         count: instances[req.params.name].count
     });
 });
 
+// we can set shutdown script to every foo server
+// to tell it to issue a curl request to this route to remove itself from the active instace list
 app.delete('/instances/:name', function(req, res) {
     if (instances[req.params.name]) {
         res.status(200).json(instances[req.params.name]);
@@ -51,11 +60,6 @@ app.use('*', function(req, res) {
 server.listen(8080, function () {
     console.log('server is running on port 8080');
 });
-
-instances['aaa'] = { log: {caller: '111', url: '/api/test', body: {name:'allen'}, query: {age:31}}, count: 132 };
-instances['bbb'] = { log: {caller: '222', url: '/api/demo', body: {name:'john'}, query: {age:18,tel: 09123123123, date: Date.now()}}, count: 97 };
-instances['ccc'] = { log: {caller: '333', url: '/api/hello', body: {name:'jeff'}, query: {age:27}}, count: 115 };
-instances['ddd'] = { log: {caller: '444', url: '/api/world', body: {name:'daniel',tel: 09123123123, date: Date.now()}, query: {age:24}}, count: 109 };
 
 io.on('connection', function (socket) {
     io.sockets.emit('first_connected', Object.keys(instances).map(function(name) {

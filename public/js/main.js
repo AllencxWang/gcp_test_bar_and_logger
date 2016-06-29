@@ -58,11 +58,17 @@ socket.on('first_connected', function(data) {
 });
 
 socket.on('data_updated', function(data) {
-    // partial update
+    var newData = vm.instances().map(function(instance) {
+        return (instance.name === data.name ? data : instance);
+    });
+    vm.instances(newData);
 });
 
 socket.on('instance_removed', function(data) {
-    // partial update
+    var newData = vm.instances().filter(function(instance) {
+        return instance.name !== data;
+    });
+    vm.instances(newData);
 });
 
 ko.applyBindings(vm);
