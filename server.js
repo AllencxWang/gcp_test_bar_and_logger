@@ -33,7 +33,7 @@ app.post('/instances/:name/logs', function(req, res) {
         count: ( req.params.name in instances ? instances[req.params.name].count + 1 : 1 )
     };
 
-    io.sockets.emit('date_updated', {
+    io.sockets.emit('data_updated', {
         name: req.params.name,
         log: req.body,
         count: instances[req.params.name].count
