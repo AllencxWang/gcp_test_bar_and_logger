@@ -45,7 +45,7 @@ app.post('/instances/:name/logs', function(req, res) {
 
 app.put('/instances/:name/health_check', function(req, res) {
     if (req.params.name in instances) {
-        instances[req.params.name].timestamp = now();
+        instances[req.params.name].timestamp = Date.now();
     }
     res.status(200).end();
 });
