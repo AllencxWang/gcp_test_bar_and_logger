@@ -61,11 +61,17 @@ socket.on('first_connected', function(data) {
 });
 
 socket.on('data_updated', function(data) {
+    var found = false;
     for(var i = 0; i < vm.instances().length; ++i) {
         if (vm.instances()[i]().name === data.name) {
             vm.instances()[i](data);
+            found = true;
             break;
         }
+    }
+    // if the instance is not in the instances list then add it 
+    if(!found) {
+        vm.instances.push(ko.observable(data));
     }
 });
 

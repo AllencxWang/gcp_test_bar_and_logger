@@ -14,12 +14,13 @@ var express = require('express'),
 // so we can use this property to manually remove an instance which is no longer existed
 setInterval(function() {
     Object.keys(instances).forEach(function(name) {
-        if (Date.now() - instances[name].timestamp >= 11 * 60 * 1000) {
+        // the elapsed time threshold must be longer than the health-check interval of GCP settings
+        if (Date.now() - instances[name].timestamp >= 15 * 1000) {
             delete instances[name];
             io.sockets.emit('instance_removed', name);
         }
     });
-}, 60 * 1000);
+}, 30 * 1000);
 
 app.use(express.static(__dirname + '/public'));
 
@@ -38,6 +39,15 @@ app.post('/instances/:name/logs', function(req, res) {
         log: req.body,
         count: instances[req.params.name].count
     });
+
+    res.status(200).end();
+});
+
+app.put('/instances/:name/health_check', function(req, res) {
+    if (req.params.name in instances) {
+        instances[req.params.name].timestamp = now();
+    }
+    res.status(200).end();
 });
 
 // we can set shutdown script to every foo server
