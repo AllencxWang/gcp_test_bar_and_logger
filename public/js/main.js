@@ -54,19 +54,24 @@ vm.stop = function() {
 }
 
 socket.on('first_connected', function(data) {
-    vm.instances(data);
-});
-
-socket.on('data_updated', function(data) {
-    var newData = vm.instances().map(function(instance) {
-        return (instance.name === data.name ? data : instance);
+    var newData = data.map(function(instance) {
+        return ko.observable(instance);
     });
     vm.instances(newData);
 });
 
+socket.on('data_updated', function(data) {
+    for(var i = 0; i < vm.instances().length; ++i) {
+        if (vm.instances()[i]().name === data.name) {
+            vm.instances()[i](data);
+            break;
+        }
+    }
+});
+
 socket.on('instance_removed', function(data) {
     var newData = vm.instances().filter(function(instance) {
-        return instance.name !== data;
+        return instance().name !== data;
     });
     vm.instances(newData);
 });
