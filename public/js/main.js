@@ -33,7 +33,7 @@ vm.start = function() {
     vm.timer = setInterval(function() {
         var xhr = new XMLHttpRequest(),
             now = Date.now();
-
+        xhr.timeout = 3000;
         if (now % 2) {
             xhr.open('POST', vm.loadBalancer);
             xhr.setRequestHeader('Content-Type', 'application/json');
